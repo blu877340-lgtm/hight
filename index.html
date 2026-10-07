@@ -1,0 +1,882 @@
+# hight
+school
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>سامانه آزمون آنلاین</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Tahoma, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            color: #222;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 850px;
+            margin: 40px auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            padding: 13px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .start-btn {
+            width: 100%;
+            background: #667eea;
+            color: white;
+            margin-top: 15px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f5f6fa;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            gap: 10px;
+        }
+
+        .timer {
+            background: #ff4757;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .question {
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .option {
+            display: block;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f7f7ff;
+        }
+
+        .option input {
+            width: auto;
+            margin-left: 10px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        .prev-btn {
+            background: #dfe4ea;
+        }
+
+        .next-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .finish-btn {
+            background: #2ed573;
+            color: white;
+        }
+
+        .progress {
+            height: 8px;
+            background: #eee;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #667eea;
+            width: 0%;
+            transition: 0.3s;
+        }
+
+        .result {
+            text-align: center;
+        }
+
+        .score {
+            font-size: 55px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px;
+        }
+
+        .result-message {
+            font-size: 20px;
+            margin-bottom: 25px;
+        }
+
+        .review {
+            text-align: right;
+            margin-top: 30px;
+        }
+
+        .review-item {
+            padding: 15px;
+            margin: 12px 0;
+            border-radius: 10px;
+        }
+
+        .correct {
+            background: #dff9e8;
+            border-right: 5px solid #2ed573;
+        }
+
+        .wrong {
+            background: #ffe1e5;
+            border-right: 5px solid #ff4757;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .info {
+            background: #f1f2f6;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            line-height: 2;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 15px auto;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .question {
+                font-size: 18px;
+            }
+
+            .top-bar {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- صفحه شروع -->
+    <div id="startScreen" class="card">
+
+        <h1>📝 آزمون آنلاین</h1>
+
+        <p class="subtitle">
+            به سامانه آزمون آنلاین خوش آمدید
+        </p>
+
+        <div class="info">
+            <strong>تعداد سوالات:</strong> 10 سوال<br>
+            <strong>زمان آزمون:</strong> 5 دقیقه<br>
+            <strong>نوع سوالات:</strong> چهارگزینه‌ای
+        </div>
+
+        <input
+            type="text"
+            id="studentName"
+            placeholder="نام و نام خانوادگی"
+        >
+
+        <button class="start-btn" onclick="startExam()">
+            شروع آزمون
+        </button>
+
+    </div>
+
+
+    <!-- صفحه آزمون -->
+    <div id="examScreen" class="card hidden">
+
+        <div class="top-bar">
+
+            <div>
+                👤 <span id="displayName"></span>
+            </div>
+
+            <div class="question-number">
+                سوال <span id="currentQuestion">1</span>
+                از
+                <span id="totalQuestions"></span>
+            </div>
+
+            <div class="timer">
+                ⏱️ <span id="timer">05:00</span>
+            </div>
+
+        </div>
+
+        <div class="progress">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+
+        <div id="questionBox"></div>
+
+        <div class="navigation">
+
+            <button
+                id="prevBtn"
+                class="prev-btn"
+                onclick="previousQuestion()"
+            >
+                قبلی
+            </button>
+
+            <button
+                id="nextBtn"
+                class="next-btn"
+                onclick="nextQuestion()"
+            >
+                بعدی
+            </button>
+
+            <button
+                id="finishBtn"
+                class="finish-btn hidden"
+                onclick="finishExam()"
+            >
+                پایان آزمون
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- صفحه نتیجه -->
+    <div id="resultScreen" class="card hidden">
+
+        <div class="result">
+
+            <h1>🎉 نتیجه آزمون</h1>
+
+            <p id="resultName"></p>
+
+            <div class="score">
+                <span id="score"></span>
+                %
+            </div>
+
+            <div id="resultMessage" class="result-message"></div>
+
+            <button
+                class="start-btn"
+                onclick="restartExam()"
+            >
+                آزمون مجدد
+            </button>
+
+        </div>
+
+        <div class="review">
+
+            <h2>بررسی پاسخ‌ها</h2>
+
+            <div id="reviewBox"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // =========================
+    // سوالات آزمون
+    // =========================
+
+    const questions = [
+
+        {
+            question: "پایتخت ایران کدام شهر است؟",
+            options: [
+                "تهران",
+                "مشهد",
+                "اصفهان",
+                "شیراز"
+            ],
+            answer: 0
+        },
+
+        {
+            question: "HTML مخفف چیست؟",
+            options: [
+                "Hyper Text Markup Language",
+                "High Text Machine Language",
+                "Hyper Tool Multi Language",
+                "Home Text Markup Language"
+            ],
+            answer: 0
+        },
+
+        {
+            question: "کدام زبان برای طراحی ظاهر صفحات وب استفاده می‌شود؟",
+            options: [
+                "Python",
+                "CSS",
+                "SQL",
+                "PHP"
+            ],
+            answer: 1
+        },
+
+        {
+            question: "کدام گزینه یک زبان برنامه‌نویسی است؟",
+            options: [
+                "HTML",
+                "CSS",
+                "JavaScript",
+                "HTTP"
+            ],
+            answer: 2
+        },
+
+        {
+            question: "حاصل 5 × 6 چند است؟",
+            options: [
+                "20",
+                "25",
+                "30",
+                "35"
+            ],
+            answer: 2
+        },
+
+        {
+            question: "کدام سیاره به سیاره سرخ معروف است؟",
+            options: [
+                "زمین",
+                "مریخ",
+                "زهره",
+                "مشتری"
+            ],
+            answer: 1
+        },
+
+        {
+            question: "بزرگ‌ترین اقیانوس جهان کدام است؟",
+            options: [
+                "اطلس",
+                "هند",
+                "آرام",
+                "منجمد شمالی"
+            ],
+            answer: 2
+        },
+
+        {
+            question: "کدام تگ برای ایجاد عنوان اصلی در HTML استفاده می‌شود؟",
+            options: [
+                "<p>",
+                "<h1>",
+                "<title>",
+                "<header>"
+            ],
+            answer: 1
+        },
+
+        {
+            question: "کدام مورد برای ذخیره اطلاعات در مرورگر مناسب است؟",
+            options: [
+                "localStorage",
+                "HTML",
+                "CSS",
+                "div"
+            ],
+            answer: 0
+        },
+
+        {
+            question: "کدام گزینه یک مرورگر اینترنتی است؟",
+            options: [
+                "Google Chrome",
+                "Windows",
+                "Python",
+                "Linux"
+            ],
+            answer: 0
+        }
+
+    ];
+
+
+    // =========================
+    // متغیرهای اصلی
+    // =========================
+
+    let currentIndex = 0;
+
+    let userAnswers = new Array(questions.length).fill(null);
+
+    let studentName = "";
+
+    let timeLeft = 5 * 60;
+
+    let timerInterval;
+
+
+    // =========================
+    // شروع آزمون
+    // =========================
+
+    function startExam() {
+
+        studentName =
+            document.getElementById("studentName").value.trim();
+
+        if (studentName === "") {
+
+            alert("لطفاً نام و نام خانوادگی خود را وارد کنید.");
+
+            return;
+        }
+
+        document.getElementById("startScreen")
+            .classList.add("hidden");
+
+        document.getElementById("examScreen")
+            .classList.remove("hidden");
+
+        document.getElementById("displayName")
+            .textContent = studentName;
+
+        document.getElementById("totalQuestions")
+            .textContent = questions.length;
+
+        showQuestion();
+
+        startTimer();
+    }
+
+
+    // =========================
+    // نمایش سوال
+    // =========================
+
+    function showQuestion() {
+
+        const question = questions[currentIndex];
+
+        document.getElementById("currentQuestion")
+            .textContent = currentIndex + 1;
+
+        let html = `
+            <div class="question">
+                ${question.question}
+            </div>
+        `;
+
+        question.options.forEach((option, index) => {
+
+            const checked =
+                userAnswers[currentIndex] === index
+                    ? "checked"
+                    : "";
+
+            html += `
+                <label class="option">
+
+                    <input
+                        type="radio"
+                        name="answer"
+                        value="${index}"
+                        ${checked}
+                        onchange="selectAnswer(${index})"
+                    >
+
+                    ${option}
+
+                </label>
+            `;
+
+        });
+
+        document.getElementById("questionBox")
+            .innerHTML = html;
+
+        updateButtons();
+
+        updateProgress();
+    }
+
+
+    // =========================
+    // انتخاب پاسخ
+    // =========================
+
+    function selectAnswer(index) {
+
+        userAnswers[currentIndex] = index;
+    }
+
+
+    // =========================
+    // سوال قبلی
+    // =========================
+
+    function previousQuestion() {
+
+        if (currentIndex > 0) {
+
+            currentIndex--;
+
+            showQuestion();
+        }
+    }
+
+
+    // =========================
+    // سوال بعدی
+    // =========================
+
+    function nextQuestion() {
+
+        if (currentIndex < questions.length - 1) {
+
+            currentIndex++;
+
+            showQuestion();
+
+        }
+
+    }
+
+
+    // =========================
+    // دکمه‌ها
+    // =========================
+
+    function updateButtons() {
+
+        const prevBtn =
+            document.getElementById("prevBtn");
+
+        const nextBtn =
+            document.getElementById("nextBtn");
+
+        const finishBtn =
+            document.getElementById("finishBtn");
+
+
+        if (currentIndex === 0) {
+
+            prevBtn.style.visibility = "hidden";
+
+        } else {
+
+            prevBtn.style.visibility = "visible";
+
+        }
+
+
+        if (currentIndex === questions.length - 1) {
+
+            nextBtn.classList.add("hidden");
+
+            finishBtn.classList.remove("hidden");
+
+        } else {
+
+            nextBtn.classList.remove("hidden");
+
+            finishBtn.classList.add("hidden");
+
+        }
+
+    }
+
+
+    // =========================
+    // نوار پیشرفت
+    // =========================
+
+    function updateProgress() {
+
+        const percent =
+            ((currentIndex + 1) / questions.length) * 100;
+
+        document.getElementById("progressBar")
+            .style.width = percent + "%";
+    }
+
+
+    // =========================
+    // تایمر
+    // =========================
+
+    function startTimer() {
+
+        updateTimer();
+
+        timerInterval = setInterval(() => {
+
+            timeLeft--;
+
+            updateTimer();
+
+            if (timeLeft <= 0) {
+
+                clearInterval(timerInterval);
+
+                alert("⏰ زمان آزمون تمام شد!");
+
+                finishExam();
+            }
+
+        }, 1000);
+
+    }
+
+
+    function updateTimer() {
+
+        const minutes =
+            Math.floor(timeLeft / 60);
+
+        const seconds =
+            timeLeft % 60;
+
+        document.getElementById("timer")
+            .textContent =
+            String(minutes).padStart(2, "0")
+            + ":"
+            +
+            String(seconds).padStart(2, "0");
+
+    }
+
+
+    // =========================
+    // پایان آزمون
+    // =========================
+
+    function finishExam() {
+
+        clearInterval(timerInterval);
+
+        let correct = 0;
+
+        questions.forEach((question, index) => {
+
+            if (
+                userAnswers[index] === question.answer
+            ) {
+
+                correct++;
+
+            }
+
+        });
+
+
+        const percentage =
+            Math.round(
+                (correct / questions.length) * 100
+            );
+
+
+        document.getElementById("examScreen")
+            .classList.add("hidden");
+
+        document.getElementById("resultScreen")
+            .classList.remove("hidden");
+
+
+        document.getElementById("resultName")
+            .textContent =
+            "دانش‌آموز: " + studentName;
+
+
+        document.getElementById("score")
+            .textContent = percentage;
+
+
+        let message = "";
+
+        if (percentage >= 90) {
+
+            message = "🏆 عالی بود! عملکرد فوق‌العاده‌ای داشتی.";
+
+        } else if (percentage >= 70) {
+
+            message = "👏 خیلی خوب بود!";
+
+        } else if (percentage >= 50) {
+
+            message = "👍 قابل قبول بود، ولی جای پیشرفت داری.";
+
+        } else {
+
+            message = "📚 بهتره یک بار دیگه مطالب رو مرور کنی.";
+
+        }
+
+
+        document.getElementById("resultMessage")
+            .textContent = message;
+
+
+        showReview();
+
+    }
+
+
+    // =========================
+    // بررسی پاسخ‌ها
+    // =========================
+
+    function showReview() {
+
+        let html = "";
+
+        questions.forEach((question, index) => {
+
+            const userAnswer =
+                userAnswers[index];
+
+            const isCorrect =
+                userAnswer === question.answer;
+
+
+            html += `
+                <div class="review-item ${isCorrect ? "correct" : "wrong"}">
+
+                    <strong>
+                        سوال ${index + 1}:
+                    </strong>
+
+                    ${question.question}
+
+                    <br><br>
+
+                    <strong>پاسخ شما:</strong>
+
+                    ${
+                        userAnswer !== null
+                        ? question.options[userAnswer]
+                        : "بدون پاسخ"
+                    }
+
+                    <br>
+
+                    <strong>پاسخ صحیح:</strong>
+
+                    ${question.options[question.answer]}
+
+                </div>
+            `;
+
+        });
+
+
+        document.getElementById("reviewBox")
+            .innerHTML = html;
+
+    }
+
+
+    // =========================
+    // آزمون مجدد
+    // =========================
+
+    function restartExam() {
+
+        currentIndex = 0;
+
+        userAnswers =
+            new Array(questions.length).fill(null);
+
+        timeLeft = 5 * 60;
+
+        document.getElementById("resultScreen")
+            .classList.add("hidden");
+
+        document.getElementById("startScreen")
+            .classList.remove("hidden");
+
+        document.getElementById("studentName")
+            .value = "";
+
+    }
+
+</script>
+
+</body>
+</html>
